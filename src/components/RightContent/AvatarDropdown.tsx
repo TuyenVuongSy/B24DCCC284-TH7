@@ -4,7 +4,6 @@ import { Avatar, Menu, Spin } from 'antd';
 import { type ItemType } from 'antd/lib/menu/hooks/useItems';
 import React from 'react';
 import { useModel } from 'umi';
-import { OIDCBounder } from '../OIDCBounder';
 import HeaderDropdown from './HeaderDropdown';
 import styles from './index.less';
 
@@ -15,7 +14,10 @@ export type GlobalHeaderRightProps = {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 	const { initialState } = useModel('@@initialState');
 
-	const loginOut = () => OIDCBounder?.getActions()?.dangXuat();
+	const loginOut = () => {
+		localStorage.removeItem('username');
+		window.location.href = '/user/login';
+	};
 
 	if (!initialState || !initialState.currentUser)
 		return (
@@ -66,14 +68,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 		},
 	];
 
-	if (menu && !initialState.currentUser.realm_access?.roles?.includes('QUAN_TRI_VIEN')) {
-		// items.splice(1, 0, {
-		//   key: 'center',
-		//   icon: <UserOutlined />,
-		//   label: 'Trang cá nhân',
-		//   onClick: () => history.push('/account/center'),
-		// });
-	}
+
 
 	return (
 		<>

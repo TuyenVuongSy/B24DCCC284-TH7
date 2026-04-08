@@ -1,4 +1,4 @@
-﻿export default [
+export default [
 	{
 		path: '/user',
 		layout: false,
@@ -23,6 +23,12 @@
 		name: 'Dashboard',
 		component: './TrangChu',
 		icon: 'HomeOutlined',
+	},
+	{
+		path: '/quan-ly-cong-viec',
+		name: 'Quản lý công việc',
+		component: './QuanLyCongViec',
+		icon: 'ProjectOutlined',
 	},
 	{
 		path: '/gioi-thieu',

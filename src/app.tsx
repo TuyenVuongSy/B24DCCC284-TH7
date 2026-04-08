@@ -27,8 +27,10 @@ export const initialStateConfig = {
  * // Tobe removed
  * */
 export async function getInitialState(): Promise<IInitialState> {
+	const username = localStorage.getItem('username');
 	return {
-		permissionLoading: true,
+		permissionLoading: false,
+		currentUser: username ? ({ name: username } as any) : undefined,
 	};
 }
 
@@ -82,19 +84,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 		footerRender: () => <Footer />,
 
 		onPageChange: () => {
-			if (initialState?.currentUser) {
-				const { location } = history;
-				const isUncheckPath = unCheckPermissionPaths.some((path) => window.location.pathname.includes(path));
-
-				if (location.pathname === '/') {
-					history.replace('/dashboard');
-				} else if (
-					!isUncheckPath &&
-					currentRole &&
-					initialState?.authorizedPermissions?.length &&
-					!initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)
-				)
-					history.replace('/403');
+			const { location } = history;
+			if (!initialState?.currentUser && location.pathname !== '/user/login') {
+				history.push('/user/login');
+			} else if (initialState?.currentUser && location.pathname === '/') {
+				history.replace('/dashboard');
 			}
 		},
 
@@ -114,13 +108,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 		),
 
 		childrenRender: (dom) => (
-			<OIDCBounder>
-				<ErrorBoundary>
-					{/* <TechnicalSupportBounder> */}
-					<OneSignalBounder>{dom}</OneSignalBounder>
-					{/* </TechnicalSupportBounder> */}
-				</ErrorBoundary>
-			</OIDCBounder>
+			<ErrorBoundary>
+				{dom}
+			</ErrorBoundary>
 		),
 		menuHeaderRender: undefined,
 		...initialState?.settings,
